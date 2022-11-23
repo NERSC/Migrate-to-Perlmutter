@@ -1,0 +1,48 @@
+This is a hybrid MPI/OpenMP code.
+
+1) To build a binary for Haswell nodes:
+% cc -qopenmp -o xthi xthi.c
+
+To build a binary for KNL nodes:
+% module swap craype-haswell craype-mic-knl
+% cc -qopenmp -o xthi-knl xthi.c
+
+2) Note: The batch scripts "run-xthi-hsw.sh" and "run-xthi-knl.sh" are prepared for you
+to just submit with "sbatch" from your default project and without a compute node
+reservation after this class:
+
+To run on Haswell:
+% sbatch run-xthi-hsw.sh
+To run on KNL:
+% sbatch run-xthi-knl.sh
+
+To use today's reservation during the class, please edit these files to add
+#SBATCH --reservation=xxx
+#SBATCH -A ntrain4
+
+where xxx is intro_hsw or intro_knl
+
+or doing an interactive batch run via salloc, and using the reservations today:
+(remove --reservation=xxx -A ntrain4 if doing this exercise outside of this class)
+
+% salloc -N 2 -C haswell -q interactive -t 30:00 --reservation=xxx -A ntrain4
+
+or: 
+% salloc -N 2 -C knl -q interactive -t 30:00 --reservation=xxx -A ntrain4
+
+<wait for a prompt to get on a compute node>, then:
+% export OMP_NUM_THREADS=8
+% export OMP_PROC_BIND=true
+% export OMP_PLACES=threads
+% srun -n 8 -c 16 --cpu-bind=cores ./xthi    (for haswell)
+or
+% srun -n 8 -c 64 --cpu-bind=cores ./xthi    (for KNL)
+
+
+3) First step is to reproduce the build and run as above.
+
+Can you order the output by MPI ranks and OpenMP threads?
+
+Then try to change number of nodes, number of MPI tasks, number of OpenMP threads, and OpenMP PROC_BIND and PLACES settings, and understand the aiffinity report.
+
+Can you use a different compiler, such as Cray or GNU compiler (other than the default Intel compiler) to build and run?  (hint: swap PrgEnv-xxx modules)

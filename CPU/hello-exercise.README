@@ -1,0 +1,49 @@
+This is a pure MPI code
+
+1) To build:
+
+On a login node:
+
+Fortran code:
+% ftn -o serial-hello serial-hello.f90
+% ftn -o mpi-hello mpi-hello.f90
+
+C code:
+% cc-o serial-hello serial-hello.c
+% cc -o mpi-hello mpi-hello.c
+
+C++ code:
+% CC -o serial-hello serial-hello.c
+% CC -o mpi-hello mpi-hello.c
+
+2) The batch scripts "run-hello-hsw.sh" and "run-hello-knl.sh" are prepared for you
+to just submit with "sbatch" from your default project and without a compute node 
+reservation after this class:
+% sbatch run-hello-hsw.sh
+or 
+% sbatch run-hello-knl.sh
+
+To use today's reservation, please edit these files to add
+#SBATCH --reservation=xxx
+#SBATCH -A ntrain4
+
+where xxx is intro_hsw or intro_knl
+
+3) You can also use salloc to run an interacrtive batch job
+% salloc -N 2 -C haswell -q interactive -t 30:00 --reservation=xxx -A ntrain4
+(remove --reservation=xxx -A ntrain4 if doing this exercise outside of this class)
+
+<wait for a prompt to get onto a compute node>...
+% srun ...
+(here use the same xxx as above, also use the same srun command as in the batch scripts)
+
+
+4) First step is to reproduce the build and run as above.
+
+Then try to change numner of nodes, number of MPI tasks, etc. to run the mpi-hello program. (hint: modify -n and -c values) 
+
+Notice the output are not ordered by MPI ranks, can you order them? (hint: use sort)
+
+Also understand that to run serial-hello, you can choose to use or not use the "srun" command. Not use "srun" is preferred for non-MPI jobs.   "srun" is required for MPI jobs.
+
+Can you use a different compiler, such as Cray or GNU compiler (other than the default Intel compiler) to build and run?  (hint: swap PrgEnv-xxx modules)

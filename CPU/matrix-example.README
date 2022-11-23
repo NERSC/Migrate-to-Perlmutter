@@ -1,0 +1,58 @@
+
+This is also a hybrid MPI/OpenMP code to produce some actual computing results
+
+1) To compile on a login node:
+
+yunhe@cori10:/global/cfs/cdirs/training/2021/CSSS> cc -qopenmp matrix.c 
+
+
+yunhe@cori10:/global/cfs/cdirs/training/2021/CSSS> cc -qopenmp -o matrix matrix.c
+
+2) To run in an interactive qos with a reservation during the class:
+
+Note: change reservation name and project name as needed 
+      use --reservation=xxx -A ntrain4, where
+         xxx is intro_hsw or intro_knl
+
+yunhe@cori10:/global/cfs/cdirs/training/2021/CSSS> salloc -N 1 -C haswell --qos=interactive -t 30:00 --reservation=intro_hsw -A ntrain4
+(remove --reservation=xxx -A ntrain4 if doing this exercise outside of this class)
+salloc: Pending job allocation 43394809
+salloc: job 36994809 queued and waiting for resources
+salloc: job 36994809 has been allocated resources
+salloc: Granted job allocation 43394809
+salloc: Waiting for resource configuration
+salloc: Nodes nid00281 are ready for job
+
+Running with 4 MPI tasks, and 4 OpenMP threads per MPI task, matrix size N=8
+yunhe@nid00281:/global/cfs/cdirs/training/2021/CSSS> srun -n 4 -c 16 --cpu-bind=cores ./matrix 8 4
+Time is 0.000942
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+
+
+Running with 8 MPI tasks, and 4 OpenMP threads per MPI task, matrix size N=8
+yunhe@nid00281:/global/cfs/cdirs/training/2021/CSSS> srun -n 8 -c 8 --cpu-bind=cores ./matrix 8 4
+Time is 0.000676
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 8.000000 
+yunhe@nid00281:/global/cfs/cdirs/training/2021/CSSS> 
+yunhe@nid00281:/global/cfs/cdirs/training/2021/CSSS> exit 
+
+yunhe@cori10:/global/cfs/cdirs/training/2021/CSSS>
+
+3) To run in an interactive qos without a reservation outside the class:
+yunhe@cori10:/global/cfs/cdirs/training/2021/CSSS> salloc -N 1 -C haswell --qos=interactive -t 30:00 
+<wait to get on a compute node>, then
+% srun ...

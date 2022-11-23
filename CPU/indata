@@ -1,0 +1,6 @@
+&params
+  ngrid   = 1000,
+  omega   = 0.75,
+  tol     = 1.e-3,
+  maxiter = 5000
+/
