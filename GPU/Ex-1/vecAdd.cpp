@@ -9,6 +9,7 @@
 {                                                                                    \
     gpuAssert((ans), __FILE__, __LINE__);                                            \
 }
+
 inline void
 gpuAssert(cudaError_t code, const char* file, int line, bool abort = true){
     if(code != cudaSuccess){
@@ -94,7 +95,7 @@ int main( int argc, char* argv[] )
  
     vec_add_gpu(h_a, h_b, h_c, n);
 
-    // Sum up vector c and print result divided by n, this should equal 1 within error
+    // Sum up vector c and print result divided by n, this should equal to 1 within error
     double sum = 0;
     for(i=0; i<n; i++)
         sum += h_c[i];

@@ -20,7 +20,7 @@ void vec_add_gpu(double *a, double *b, double *c, int n){
     map(to: a[:n], b[:n]) map(from: c[:n])
 #elif _OPENACC
 #pragma acc parallel loop gang vector \
-    copyin(a[:n]) copyout(c[:n])
+    copyin(a[:n],b[:n]) copyout(c[:n])
 #endif
     for(int i = 0; i < n; ++i)
         c[i] = a[i] + b[i];
@@ -49,7 +49,7 @@ int main( int argc, char* argv[] )
  
 
     // Allocate memory for each vector on host
-    a = new double [VECSIZE];//(double*)malloc(bytes);
+    a = new double [VECSIZE];
     b = new double [VECSIZE];
     c = new double [VECSIZE];
 

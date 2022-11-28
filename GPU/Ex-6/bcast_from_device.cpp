@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <iostream>
 #include <mpi.h>
 #include <cuda_runtime.h>
 
@@ -9,6 +8,9 @@ int main(int argc, char *argv[]) {
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+    cudaSetDevice(myrank);
+    std::cout<<"Rank"<<myrank<<" has device:"<<myrank<<std::endl;
+
 
     val_host = (float*)malloc(sizeof(float));
     cudaMalloc((void **)&val_device, sizeof(float));
