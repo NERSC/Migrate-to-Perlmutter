@@ -1,0 +1,142 @@
+
+This example illustrates how to compile a code that depends on an external 
+package or library that is available in the Extreme-Scale Scientific Software
+Stack (E4S). E4S contains many open-sourced projects, including xSDK, dev-tools,
+math-libraries, and more. The E4S software stack is a 
+is deployed via Spack and therefore this example demonstrates several 
+useful Spack commands. Alternatively, this example provides a good 
+introduction to using Spack to install a dependency for compilation. If the 
+disired package is not pre-installed, the user needs only first 
+install the desired package via Spack, after which, the steps to use that
+package to compile with will be similar.
+
+
+The code used for this example is a set of tests for the GNU Scientific Library
+(GSL). The source code is called `gsl_test.cpp`. While compiling this code we
+will link the required `gsl` and `glscblas` libraries. For more info, see 
+https://people.math.sc.edu/Burkardt/cpp_src/gsl_test/gsl_test.html. 
+
+
+Steps:
+
+#. To prepare, reset modules to ensure we are starting from default module
+   environment:
+
+  `module reset`
+
+
+#. For this example, I will use the code `gsl_test.cpp`. To illustrate the 
+   thought process, we will suppose that this code requires version 2.7.1 of 
+   gsl --the GNU Scientific Library. Begin by changing directories to the
+   location of the code `gsl_test.cpp`.
+
+  `cd ~/Migrate-to-Perlmutter/CPU`
+
+
+#. To illustrate the thought process, I first check if GSL version 2.7.1 is
+   available as a module.
+
+   `module spider gsl`
+
+   This shows that there is (currently) no module for GSL ver. 2.7.1. So we
+   will need to get the dependency another way.
+
+
+#. Now we check if this version of GSL is included with the E4S software stack.
+   To access this software stack we will first load E4S version 22.05.
+   This is done by loading the module,
+
+   `module load e4s/22.05`
+
+   Because the E4S stack is deployed via Spack, this command will load an 
+   instance of Spack, activate the E4S environment and make the software
+   available to load. 
+
+
+#. Next we check the included versions of GSL. To do this, we use the Spack
+   command,
+
+   `spack find gsl`
+
+   From the output,
+
+   ```
+   ...
+   
+   ==> 2 installed packages
+   -- cray-sles15-zen3 / gcc@11.2.0 --------------------------------
+   gsl@2.7  gsl@2.7.1
+   ```
+
+   we see several versions of GSL, including the desired 2.7.1 version. 
+
+   Note: At this point, if we did not find what we want, we could try installing
+   it with Spack commands, i.e., `spack instal gsl@2.7.1`. For more info
+   on Spack see: 
+   https://spack.readthedocs.io/en/latest/basic_usage.html#installing-and-uninstalling
+
+
+#. To find out more information about the GSL package in general, we can
+   type:
+
+   `spack info gsl`
+
+   This displays the versions and options available to install with Spack. 
+   Since this package is already installed, this is only for informative 
+   purposes. 
+
+
+#. Now we load the package we want. For Spack, we need to be specific about 
+   which package to load. Because there are two installed versions of GSL, 
+   it's necessary to specify the version. Thus we use, 
+
+   `spack load gsl@2.7.1`
+
+   This will load the package into your environment, much like a `module load`.
+
+
+#. In this step we show how to access the location of the installed files.
+   Spack provides a convenient command for this:  
+
+   `spack location -i gsl@2.7.1`
+
+   This will provide the path to the location of the GSL ver. 2.7.1 files. 
+
+
+#. In this final step we compile the `gsl_test.cpp` code with the compiler 
+   wrapper `CC`, and explicit locations for the includes and libraries. 
+   The syntax `$(spack location -i gsl@2.7.1)` will run the command from the 
+   step above and then substitute the expression with the output of the command.
+   This is a convenient way to avoid typing the long directory names used by
+   Spack. 
+
+   To compile we type:
+
+   ```
+   CC gsl_test.cpp -I$(spack location -i gsl@2.7.1)/include \
+     -L$(spack location -i gsl@2.7.1)/lib -lgsl -lgslcblas -o gsl_test
+   ```
+
+#. If the compile is successful, it produces the executable `gsl_test`. In an
+   interactive session, we can run it by typing,
+
+   `./gsl_test`
+
+   If the code runs correctly, at the end you should see,
+
+   ```
+   ...
+   GSL_TEST:
+     Normal end of execution.
+   ...
+   ```
+ 
+   In the output. 
+
+This concludes the example.  
+
+---
+
+Author: Erik Palmer
+Email: epalmer@lbl.gov
+Date: 11/28/2022
