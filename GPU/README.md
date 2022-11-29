@@ -1,10 +1,23 @@
 # GPU Offloading, MPI and Compilers on Perlmutter
 This directory contains examples for building and running basic GPU offloaded C++ codes on Perlmutter using different compilers. The exercises also cover linking with MPI libraries as well as performing rank to device mappings on a simple code example.
 
-All the examples contain a `batch.sh` in their respective directories that should be used for running the examples through batch submission. Otherwise the run steps mentioned in the examples below can be used directly on interactive allocations. Comment out the following line when doing exercises outside of the reservation window of 9:30-12:30, December 30 2022.
-```bash 
-#SBATCH --reservation=xxx
+All the examples contain a `batch.sh` in their respective directories that should be used for running the examples through batch submission. Alternatively the run steps mentioned in the examples below can be used directly in an interactive (`salloc`) allocation.
+
+There is a reservation of Perlmutter GPU nodes on the day of training, which you can use to avoid waiting in the job queue. To check if the reservation is currently active you can use:
+
 ```
+scontrol -o show res pm_gpu_dec1 | grep -o State=ACTIVE
+```
+
+If you see `State=ACTIVE` in the output, then the reservation is available. To use it, you must specify the reservation and charge to the account `ntrain2`. To do this, uncomment the following lines from `batch.sh`:
+
+```bash 
+##SBATCH --reservation=pm_gpu_dec1
+##SBATCH -A ntrain2
+```
+
+**TIP**: in each of the exercises, first look in the `Makefile` and `batch.sh` to understand what they will do.
+
 
 ## Exercise 1: Simple CUDA C++ program
 Most of the times CUDA kernels and code containing CUDA API calls are placed in a file with extension `.cu `. The `nvcc` compiler provided with CUDAtoolkit can by default recognize `.cu` files as containing CUDA code and can link in the required libraries while also compiling the host side code with a host compiler.
