@@ -6,7 +6,7 @@ SHELL = /bin/sh
 EXE = vec_add.ex
 SRC = *.cpp
 
-CXX = clang++
+CXX = CC
 
 CXXFLAGS += -O3 -fopenmp
 CXXFLAGS += -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=${CUDA_HOME} -I${CUDA_HOME}/include -ffp-contract=fast

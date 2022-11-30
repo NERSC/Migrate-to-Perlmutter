@@ -401,10 +401,10 @@ I am rank 1 and received broadcasted value: 42.000000
 
 
 # Exercise 7: Simple OpenMP/OpenACC C++ program
-In this example we cover building and running OpenMP/OpenACC C++ codes on Perlmutter using the `NVIDIA` compilers. 
+In this example we cover building and running OpenMP/OpenACC C++ codes on Perlmutter using the NVIDIA and Cray compilers. 
 
 Both OpenMP and OpenACC are directive based programming frameworks. NVIDIA compiler supports both the frameworks. 
-Hence we use `PrgEnv-nvidia` environment on Perlmutter.
+Hence we recommend `PrgEnv-nvidia` environment on Perlmutter for these platforms. Optionally `PrgEnv-cray` can be used for OpenMP. OpenACC support is currently limited through `PrgEnv-cray` and is only available for Fortran.
 
 The examples in this section mirror the CUDA example from Exercise-1 but in OpenMP and OpenACC programming frameworks.
 
@@ -423,3 +423,8 @@ make OPENACC=y
 ```
 
 You can run these examples by using the batch.sh script.
+
+As an optional exercise, you can try to build the OpenMP example with `PrgEnv-cray`, this can be done by renaming the `Makefile.cray` file to `Makefile` and then building for OpenMP using the steps above. Be sure to load `PrgEnv-cray` before trying this.
+
+## Exercise-7b: OpenMP offload in Fortran
+This example contains a simple Fortran code with OpenMP offload. You can build this using Cray or NVIDIA compilers both. First try by loading `PrgEnv-cray` and using the Makefile to build it. Try modifying the batch.sh file from Exercise-7 to run this example. As an optional exercise build this example using NVIDIA compilers. 

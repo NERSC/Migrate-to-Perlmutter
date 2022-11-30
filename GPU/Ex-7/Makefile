@@ -5,7 +5,7 @@ SHELL = /bin/sh
 #==========================
 SRC = *.cpp
 
-CXX = nvc++
+CXX = CC
 
 OPENMP:=n
 OPENACC:=n
