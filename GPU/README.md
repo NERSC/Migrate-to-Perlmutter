@@ -1,10 +1,23 @@
 # GPU Offloading, MPI and Compilers on Perlmutter
 This directory contains examples for building and running basic GPU offloaded C++ codes on Perlmutter using different compilers. The exercises also cover linking with MPI libraries as well as performing rank to device mappings on a simple code example.
 
-All the examples contain a `batch.sh` in their respective directories that should be used for running the examples through batch submission. Otherwise the run steps mentioned in the examples below can be used directly on interactive allocations. Comment out the following line when doing exercises outside of the reservation window of 9:30-12:30, December 30 2022.
-```bash 
-#SBATCH --reservation=xxx
+All the examples contain a `batch.sh` in their respective directories that should be used for running the examples through batch submission. Alternatively the run steps mentioned in the examples below can be used directly in an interactive (`salloc`) allocation.
+
+There is a reservation of Perlmutter GPU nodes on the day of training, which you can use to avoid waiting in the job queue. To check if the reservation is currently active you can use:
+
 ```
+scontrol -o show res pm_gpu_dec1 | grep -o State=ACTIVE
+```
+
+If you see `State=ACTIVE` in the output, then the reservation is available. To use it, you must specify the reservation and charge to the account `ntrain2`. To do this, uncomment the following lines from `batch.sh`:
+
+```bash 
+##SBATCH --reservation=pm_gpu_dec1
+##SBATCH -A ntrain2
+```
+
+**TIP**: in each of the exercises, first look in the `Makefile` and `batch.sh` to understand what they will do.
+
 
 ## Exercise 1: Simple CUDA C++ program
 Most of the times CUDA kernels and code containing CUDA API calls are placed in a file with extension `.cu `. The `nvcc` compiler provided with CUDAtoolkit can by default recognize `.cu` files as containing CUDA code and can link in the required libraries while also compiling the host side code with a host compiler.
@@ -32,7 +45,7 @@ The output should look like:
 final result: 1.000000
 ```
 
-Optionally, CUDA codes can be built using the NVIDIA provided C and CXX compilers. To try this make sure that you have `PrgEnv-nvidia` loaded and then follow steps below:
+**Special case:** Optionally, CUDA codes can be built using the NVIDIA C and CXX compilers. To try this make sure that you have `PrgEnv-nvidia` loaded and then follow steps below:
 ```bash
 cd Ex-1
 make clean
@@ -57,7 +70,7 @@ final result: 1.000000
 
 
 ## Exercise 2: Simple CUDA C++ program, separate compilation.
- The case presented in Exercise 1 is a rare occurence when working with a large code base, most of the time device (CUDA) code is kept completely separate. Moreover, application may require the use of a compiler different than nvcc. This requires the build phase to be divided in separate parts where device code is built separately using `nvcc` compiler and later linked with the main app using the compiler of choice. In addition to linking the device code we also link the `cudart` library to make sure all the CUDA calls are taken care of. This exercise demonstrates a similar scenerio by breaking down the code from Exercise 1 into different files such that all the CUDA code is located in `kernels.cu` and it is called in the `vecAdd.cpp` file inside `main` function using headers available in `kernels.h`.
+ The special case presented in Exercise 1 is rare when working with a large code base, most of the time device (CUDA) code is kept completely separate. Moreover, applications may require the use of a compiler not from NVIDIA. This requires the build phase to be divided in separate parts where device code is built separately using `nvcc` compiler and later linked with the main app using the compiler of choice. In addition to linking the device code we also link the `cudart` library to make sure all the CUDA calls are taken care of. This exercise demonstrates a similar scenerio by breaking down the code from Exercise 1 into different files such that all the CUDA code is located in `kernels.cu` and it is called in the `vecAdd.cpp` file inside `main` function using headers available in `kernels.h`.
  
 To build this example make sure that module `cudatoolkit` is loaded and a non NVIDIA environment (e.g. `PrgEnv-gnu `) is loaded. The build steps are listed in `Makefile` located within the same directory. We build the CUDA code using the `nvcc` compiler and later link the object file with the main executable using `g++`. Users can try different compilers in place of `g++` to verify the flexibility of this method. To build this example follow the steps below:
  
@@ -103,7 +116,7 @@ cd Ex-3
 make clean
 make
 ```
-It must be noted that in line 5 of `Makefile`, flag `-gpu=cc80` is being passed to `CC`, that is to esnure that CUDA code is built for the devices of compute capability 8.0.
+It must be noted that in line 5 of `Makefile`, flag `-gpu=cc80` is being passed to `CC`, that is to ensure that CUDA code is built for the devices of compute capability 8.0, i.e. NVIDIA A100 devices that are available on Perlmutter.
 
 To run:
 
@@ -142,7 +155,7 @@ Other 3 GPUs are:
 ****final result: 1.000000 ******
 ```
 
-You can try this example by replacing `PrgEnv-nvidia` with another programming environment, you will observe that CUDA API calls are not recognized. If a non NVIDIA compiler is desired for MPI then we should use the separate compilation method similar to the one discussed in Exercise 2. Exercise 4 elaborates on this.
+You can try this example by replacing `PrgEnv-nvidia` with another programming environment, eg PrgEnv-gnu, you will observe that the `.cu` extension is not recognized. If `vecAdd.cu` is replaced by `vecAdd.cpp` from Ex-1, the GNU compiler will recognize the file but the the CUDA API calls in it are not recognized. If a non NVIDIA compiler is desired for MPI then we should use the separate compilation method similar to the one discussed in Exercise 2. Exercise 4 elaborates on this.
 
  ## Exercise 4: Simple CUDA + MPI C++ program, separate compilation.
  Just as described in Exercise 2, users may need to use different compilers for their device code and the main application. When we have MPI in the mix, users can use the MPI build of their choice by loading the correct programming environment and then using the corresponding `CC` wrapper to build the main app and then link with the separately compiled CUDA code. 
@@ -284,6 +297,28 @@ Other 3 GPUs are:
 ****final result: 1.000000 ******
 ```
 
+The `batch_reg.sh` script includes a few lines to show which CPUs and GPUs are within each NUMA node:
+
+```
+NUMA node(s):                    4
+NUMA node0 CPU(s):               0-15,64-79
+NUMA node1 CPU(s):               16-31,80-95
+NUMA node2 CPU(s):               32-47,96-111
+NUMA node3 CPU(s):               48-63,112-127
+
+
+    NUMANode L#0 (P#0 62GB)
+        PCI c1:00.0 (3D)
+    NUMANode L#1 (P#1 63GB)
+        PCI 82:00.0 (3D)
+    NUMANode L#2 (P#2 63GB)
+        PCI 41:00.0 (3D)
+    NUMANode L#3 (P#3 63GB)
+        PCI 03:00.0 (3D)
+```
+
+In this example we can see that rank 1 has Core 1 (NUMA node 0) and GPU 41:00:.0 (NUMA node 2).
+
 In order to bind the MPI ranks to the GPUs located closest to the corresponding core (NUMA region), we use the `--gpu-bind=closest` flag, other options for `--gpu-bind` can also be considered to suite each application's need. Rerun the same example using the `--gpu-bind=closest` flag:
 
 ```bash
@@ -297,34 +332,45 @@ srun -n8 --cpu-bind=cores --gpu-bind=closest ./vec_add
 and inspect the output as shown below:
 
 ```bash
-NUMA node(s):        4
-NUMA node0 CPU(s):   0-15,64-79
-NUMA node1 CPU(s):   16-31,80-95
-NUMA node2 CPU(s):   32-47,96-111
-NUMA node3 CPU(s):   48-63,112-127
+NUMA node(s):                    4
+NUMA node0 CPU(s):               0-15,64-79
+NUMA node1 CPU(s):               16-31,80-95
+NUMA node2 CPU(s):               32-47,96-111
+NUMA node3 CPU(s):               48-63,112-127
 
 
-Rank 1/8 (PID:74002 on Core: 16) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:81:00.0
-Other 0 GPUs are:
-Rank 3/8 (PID:74004 on Core: 48) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:03:00.0
-Other 0 GPUs are:
-Rank 5/8 (PID:74006 on Core: 17) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:81:00.0
-Other 0 GPUs are:
-Rank 7/8 (PID:74008 on Core: 49) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:03:00.0
-Other 0 GPUs are:
-Rank 0/8 (PID:74001 on Core: 0) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:C1:00.0
-Other 0 GPUs are:
-Rank 4/8 (PID:74005 on Core: 1) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:C1:00.0
-Other 0 GPUs are:
-Rank 6/8 (PID:74007 on Core: 33) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:41:00.0
-Other 0 GPUs are:
-Rank 2/8 (PID:74003 on Core: 32) from nid003497 sees 1 GPUs, GPU assigned to me is: = 0000:41:00.0
+    NUMANode L#0 (P#0 62GB)
+        PCI c1:00.0 (3D)
+    NUMANode L#1 (P#1 63GB)
+        PCI 82:00.0 (3D)
+    NUMANode L#2 (P#2 63GB)
+        PCI 41:00.0 (3D)
+    NUMANode L#3 (P#3 63GB)
+        PCI 03:00.0 (3D)
 
+
+Rank 1/8 (PID:102481 on Core: 1) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:C1:00.0
+Other 0 GPUs are:
+Rank 3/8 (PID:102483 on Core: 17) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:82:00.0
+Other 0 GPUs are:
+Rank 7/8 (PID:102488 on Core: 49) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:03:00.0
+Other 0 GPUs are:
+Rank 0/8 (PID:102480 on Core: 0) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:C1:00.0
+Other 0 GPUs are:
+Rank 5/8 (PID:102486 on Core: 33) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:41:00.0
+Other 0 GPUs are:
+Rank 2/8 (PID:102482 on Core: 16) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:82:00.0
+Other 0 GPUs are:
+Rank 4/8 (PID:102485 on Core: 32) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:41:00.0
+Other 0 GPUs are:
+Rank 6/8 (PID:102487 on Core: 48) from nid001364 sees 1 GPUs, GPU assigned to me is: = 0000:03:00.0
+Other 0 GPUs are:
 ****final result: 1.000000 ******
 ```
-To view the NUMA regions on current node, use `lscpu | grep NUMA` and observe from the above output that cores in the same NUMA region always view the same GPU. It must be noted that when `--gpu-bind=closest` is used only the closest GPUs are visible to MPI ranks. 
 
-You can also use the sbatch scripts `batch_reg.sh` and `batch_close.sh` to run the examples without and with GPU bindings. These scripts are located in the same folder (`Ex-5`). 
+Now we see that rank 1 on Core 1 (NUMA node 0) and using GPU C1:00.0 (NUMA node 0).
+
+We can use `lscpu` to see the mapping of CPU cores to NUMA regions, and `lstopo` to see the node topology in greater detail (here we have grepped out the beginning of each NUMA region report, and the GPU devices). It must be noted that when `--gpu-bind=closest` is used only the closest GPUs are visible to MPI ranks. 
 
 # Exercise-6: CUDA-aware MPI
 

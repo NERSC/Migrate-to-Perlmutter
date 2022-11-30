@@ -1,9 +1,13 @@
 NVCCFLAGS = -arch=sm_80
 NVCFLAGS = -cuda -gpu=cc80
+# nvcc can be used to build cuda code (*.cu) for any compiler:
 vec_add: vecAdd.cu
 	nvcc $(NVCCFLAGS) vecAdd.cu -o $@
-vec_add_nv: vecAdd.cu
+# the nvidia compilers recognize cuda code within a C or C++ source file,
+# and can compile it directly (either via the Cray compiler wrapper, or with
+# nvc or nvc++):
+vec_add_nv: vecAdd.cpp
 	nvc++ $(NVCFLAGS) vecAdd.cpp -o vec_add
 clean:
-	rm vec_add vec_add_nv
+	rm -f vec_add vec_add_nv
 
