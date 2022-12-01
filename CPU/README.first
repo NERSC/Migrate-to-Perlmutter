@@ -1,0 +1,5 @@
+In this CPU examples directory, please refer to the README files here, and work in this order:
+-- hello-exercise.README
+-- matrix-exercise.README (C) or jacobi-example.README (Fortran)
+-- xthi-exercise.README
+-- gsl_test.README
