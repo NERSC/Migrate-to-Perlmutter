@@ -1,4 +1,4 @@
-We have a serial hello and an MPI hello code in Fortran, C, and C++ code here. 
+We have here a serial hello program and an MPI hello program, in Fortran, C, and C++, individually. 
 
 1) To build on Cori or on Perlmutter, just use the compiler wrappers: ftn for Fortran, cc for C, and CC for C++ codes. These compiler wrappers will link with the default loaded cray-mpich (MPI) libraries for the MPI hello code automatically. Do not use native compilers (such as gfortran, gcc, g++; nvfortran, nvc, nvc++; crayftn, craycc, craycxx; ifort, icc, icxx) or mpi compiler wrappers (such as mpif90, mpicc, or mpicxx).
 
