@@ -7,7 +7,7 @@ vec_add: vecAdd.cu
 # and can compile it directly (either via the Cray compiler wrapper, or with
 # nvc or nvc++):
 vec_add_nv: vecAdd.cpp
-	nvc++ $(NVCFLAGS) vecAdd.cpp -o vec_add
+	CC $(NVCFLAGS) vecAdd.cpp -o vec_add
 clean:
 	rm -f vec_add vec_add_nv
 
