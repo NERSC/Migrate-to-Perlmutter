@@ -16,12 +16,11 @@ C++ code:
 % CC -o serial-hello serial-hello.c
 % CC -o mpi-hello mpi-hello.c
 
-2) The batch scripts "run-hello-hsw.sh" and "run-hello-knl.sh" for Cori and run-hello-pm.sh for Perlmutter CPU are prepared for you to just submit with "sbatch" from your default project and without a compute node 
-reservation after this class:
-% sbatch run-hello-hsw.sh
-or 
-% sbatch run-hello-knl.sh
+2) The batch script run-hello-pm.sh for Perlmutter CPU (as well as run-hello-hsw.sh and run-hello-knl.sh for Cori Haswell and KNL nodes are prepared for you to just submit with "sbatch" from your default project and without a compute node reservation outside of the training today:
 % sbatch run-hello-pm.sh
+or 
+% sbatch run-hello-hsw.sh
+% sbatch run-hello-knl.sh
 
 To use today's compute node reservation, please edit run-hello-pm.sh to add
 #SBATCH --reservation=pm_cpu_dec1
