@@ -1,5 +1,7 @@
 
-This is a hybrid MPI/OpenMP code in Fortran that produces some actual computing results
+This is a hybrid MPI/OpenMP code in Fortran that produces some actual computing results.
+
+In this example, we will build this code with different compilers, and run this code with different number of MPI tasks and OpenMP threads etc.
 
 1) To compile on a login node
 yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> ftn -fopenmp jacobi.f90 -fallow-argument-mismatch -o jacobi.gnu

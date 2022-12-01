@@ -1,5 +1,8 @@
 
-matrix.c is a hybrid MPI/OpenMP code in C that produces some actual computing results
+matrix.c is a hybrid MPI/OpenMP code in C that produces some actual computing results.
+
+In this example, we will build this code with different compilers, and run this code with different number of MPI tasks and OpenMP threads etc.
+
 
 1) To compile on a login node
 yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> cc -fopenmp -o matrix matrix.c
@@ -19,7 +22,6 @@ salloc: Nodes nid005004 are ready for job
 Running with 4 MPI tasks, and 4 OpenMP threads per MPI task, matrix size N=8
 
 
-yunhe@nid005004:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_THREADS=4
 yunhe@nid005004:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_NUM_THREADS=4
 yunhe@nid005004:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_PROC_BIND=spread
 yunhe@nid005004:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_PLACES=threads
