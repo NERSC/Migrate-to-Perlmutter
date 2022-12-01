@@ -1,5 +1,5 @@
 
-This is a hybrid MPI/OpenMP code in C that produces some actual computing results
+matrix.c is a hybrid MPI/OpenMP code in C that produces some actual computing results
 
 1) To compile on a login node
 yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> cc -fopenmp -o matrix matrix.c
