@@ -71,7 +71,7 @@ program jacobi_mpiomp
 
     call compute_diff(u,unew,n,js,je,diffnorm)
 
-!    if (myid == 0 .and. mod(k,10) ==0) print *, k, diffnorm
+    if (myid == 0 .and. mod(k,100) ==0) print *, k, diffnorm
 
 !   Make the new value the old value for the next iteration.
 

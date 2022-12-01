@@ -1,0 +1,72 @@
+
+This is a hybrid MPI/OpenMP code in Fortran that produces some actual computing results
+
+1) To compile on a login node
+yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> ftn -fopenmp jacobi.f90 -fallow-argument-mismatch -o jacobi.gnu
+jacobi.f90:125:17:
+
+  123 |   call mpi_bcast(ngrid,1,mpi_integer,0,mpi_comm_world,ierr)
+      |                 2
+  124 |   call mpi_bcast(maxiter,1,mpi_integer,0,mpi_comm_world,ierr)
+  125 |   call mpi_bcast(tol,1,mpi_real,0,mpi_comm_world,ierr)
+      |                 1
+Warning: Type mismatch between actual argument at (1) and actual argument at (2) (REAL(4)/INTEGER(4)).
+
+Notice the flag -fallow-argument-mismatch is added for this build with the default gcc compiler.  Without this flag, the build fails with "Error: Type mismatch between actual argument at (1) and actual argument at (2) (REAL(4)/INTEGER(4)).
+
+
+yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> cc -fopenmp -o matrix matrix.c
+
+2) To run in an interactive qos with a compute node reservation during the training today:
+yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> salloc -N 1 -C cpu -q interactive --reservation=pm_cpu_dec1 -A ntrain2 -t 30:00
+salloc: Pending job allocation 3813995
+salloc: job 3813995 queued and waiting for resources
+salloc: job 3813995 has been allocated resources
+salloc: Granted job allocation 3813995
+salloc: Waiting for resource configuration
+salloc: Nodes nid005207 are ready for job
+
+
+Running with 8 MPI tasks, and 4 OpenMP threads per MPI task:
+
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_NUM_THREADS=4
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_PROC_BIND=spread
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_PLACES=threads
+
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> srun -n 8 -c 32 --cpu-bind=cores ./jacobi
+         100  0.281969100    
+         200  0.167565361    
+         300  0.123571306    
+         400   9.95471552E-02
+         500   8.41719508E-02
+
+
+Running with 4 MPI tasks, and 8 OpenMP threads per MPI task, matrix size N=8
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> export OMP_NUM_THREADS=8
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> srun -n 4 -c 64 --cpu-bind=cores ./jacobi
+         100  0.281969100    
+         200  0.167565361    
+         300  0.123571306    
+         400   9.95471627E-02
+         500   8.41719583E-02
+
+yunhe@nid005207:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> exit
+
+yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU>
+
+
+3) To run in an interactive qos without a reservation outside the training today:
+yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> salloc -N 1 -C cpu -q interactive -t 30:00
+<wait to get on a compute node>, then
+% srun ...
+
+
+4) Try to compile and run with a different compiler:
+
+To use nvidia compiler:
+% module load PrgEnv-nvidia
+% ftn -mp jacobi.f90 -o jacobi
+
+To use cray compiler:
+% module load PrgEnv-cray
+% ftn -homp jacobi.f90 -o jacobi
