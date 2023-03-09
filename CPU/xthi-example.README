@@ -1,0 +1,72 @@
+xthi.c is a hybrid MPI/OpenMP code which prints out MPI process and thread affinity information,
+
+In this example, we will build and run with different number of MPI tasks and OpenMP threads etc. to verify the affinity and compare the output with the NUMA domain diagram to understand where each process and thread binds to on the CPU node.
+
+1) To build a binary on a Perlmutter login node, with default gnu compiler:
+% cc -fopenmp -o xthi xthi.c
+
+  To build a binary on a Cori login node, with default intel compiler:
+% cc -qopenmp -o xthi xthi.c
+
+2) The batch script run-xthi-pm.sh for Perlmutter CPU (as well as run-xthi-hsw.sh and run-xthi-knl.sh for Cori Haswell and KNL nodes are prepared for you to just submit with "sbatch" from your default project and without a compute node reservation outside of the training today:
+% sbatch run-xthi-pm.sh
+or 
+% sbatch run-xthi-hsw.sh
+% sbatch run-xthi-knl.sh
+
+To use today's compute node reservation, please edit run-hello-pm.sh to add
+#SBATCH --reservation=pm_cpu_mar10 #SBATCH -A ntrain8
+
+3) You can also use salloc to run an interactive batch job, such as on Perlmutter CPU:
+% salloc -N 2 -C cpu -q interactive -t 30:00 --reservation=pm_cpu_mar10 -A ntrain8
+(remove --reservation=xxx -A ntrain8 if doing this exercise outside of this class)
+
+<wait for a prompt to get on a compute node>, then:
+% export OMP_NUM_THREADS=8
+% export OMP_PROC_BIND=spread
+% export OMP_PLACES=threads
+% srun -n 8 -c 64 --cpu-bind=cores ./xthi   
+...
+
+
+
+here the affinity values for rank xx, thread yy is zzz, where zzz is the logical CPU number as illustrated in the Perlmutter NUMA domain diagram, so you can verify which physical core in which NUMA domain this thread is bind to and ensure it is optimal. 
+
+
+3) First step is to reproduce the build and run as above.
+
+Can you order the output by MPI ranks and OpenMP threads? (hint: use sort. See answer at the bottom)
+
+Then try to change number of nodes, number of MPI tasks, number of OpenMP threads,
+make sure to use the correct -c value (256/tpn, where tpn is MPI tasks per node)
+
+4) Could also try with different OMP_PROC_BIND and OMP_PLACES settings below, and understand the affinity report.
+OMP_PROC_BIND: spread, close, true
+OMP_PLACES: threads, cores, sockets
+
+5) Can also check thread affinity with OMP_DISPLAY_AFFINITY
+When set to true, it prints affinity report from the OpenMP implementatio
+OMP_DISPLAY_AFFINITY can be used to check affinity for any OpenMP program. 
+% export OMP_DISPLAY_AFFINITY=true
+% export OMP_AFFINITY_FORMAT="host=%H, pid=%P, thread_num=%n, thread affinity=%A” (this is optional)
+% srun -n 8 -c 64 --cpu-bind=cores ./xthi  
+...
+
+
+
+
+
+
+
+5) Can you use a different compiler, such as Nvidia or Cray compiler (other than the default GNU compiler) to build and run?
+ (hint: swap PrgEnv-xxx modules)
+
+
+
+
+
+
+
+Answer to sort output:
+% srun -n 8 -c 64 --cpu-bind=cores ./xthi |sort -k4n,6n
+...
