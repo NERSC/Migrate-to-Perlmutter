@@ -1,3 +1,4 @@
+# Helen He, Mar 9, 2023
 
 This is a hybrid MPI/OpenMP code in Fortran that produces some actual computing results.
 
@@ -20,7 +21,7 @@ Notice the flag -fallow-argument-mismatch is added for this build with the defau
 yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> cc -fopenmp -o matrix matrix.c
 
 2) To run in an interactive qos with a compute node reservation during the training today:
-yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> salloc -N 1 -C cpu -q interactive --reservation=pm_cpu_dec1 -A ntrain2 -t 30:00
+yunhe@perlmutter:login24:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> salloc -N 1 -C cpu -q interactive --reservation=pm_cpu_mar10 -A ntrain8 -t 30:00
 salloc: Pending job allocation 3813995
 salloc: job 3813995 queued and waiting for resources
 salloc: job 3813995 has been allocated resources

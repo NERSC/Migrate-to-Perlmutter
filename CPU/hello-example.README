@@ -1,3 +1,5 @@
+# Helen He, Mar 9, 2023
+
 We have here a serial hello program and an MPI hello program, in Fortran, C, and C++, individually. 
 
 In this example, we will build these programs using compiler wrappers with different compilers and run with different number of MPI tasks.
@@ -25,12 +27,12 @@ or
 % sbatch run-hello-knl.sh
 
 To use today's compute node reservation, please edit run-hello-pm.sh to add
-#SBATCH --reservation=pm_cpu_dec1
-#SBATCH -A ntrain2
+#SBATCH --reservation=pm_cpu_mar10
+#SBATCH -A ntrain8
 
 3) You can also use salloc to run an interactive batch job, such as on Perlmutter CPU:
-% salloc -N 2 -C cpu -q interactive -t 30:00 --reservation=pm_cpu_dec1 -A ntrain2
-(remove --reservation=xxx -A ntrain2 if doing this exercise outside of this class)
+% salloc -N 2 -C cpu -q interactive -t 30:00 --reservation=pm_cpu_mar10 -A ntrain8
+(remove --reservation=xxx -A ntrain8 if doing this exercise outside of this class)
 
 <wait for a prompt to get onto a compute node>...
 % srun ...

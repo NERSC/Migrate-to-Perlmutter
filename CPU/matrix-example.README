@@ -1,3 +1,4 @@
+# Helen He, Mar 9, 2023
 
 matrix.c is a hybrid MPI/OpenMP code in C that produces some actual computing results.
 
@@ -9,7 +10,7 @@ yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> cc -fop
 
 2) To run in an interactive qos with a compute node reservation during the training today:
 
-yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> salloc -N 1 -C cpu -q interactive --reservation=pm_cpu_dec1 -A ntrain2 -t 30:00
+yunhe@perlmutter:login37:/pscratch/sd/y/yunhe/Migrate-to-Perlmutter/CPU> salloc -N 1 -C cpu -q interactive --reservation=pm_cpu_mar10 -A ntrain8 -t 30:00
 
 salloc: Pending job allocation 3811065
 salloc: job 3811065 queued and waiting for resources

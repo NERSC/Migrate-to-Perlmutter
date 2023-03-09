@@ -1,3 +1,5 @@
+# Helen He, Mar 9, 2023
+
 xthi.c is a hybrid MPI/OpenMP code which prints out MPI process and thread affinity information,
 
 In this example, we will build and run with different number of MPI tasks and OpenMP threads etc. to verify the affinity and compare the output with the NUMA domain diagram to understand where each process and thread binds to on the CPU node.
