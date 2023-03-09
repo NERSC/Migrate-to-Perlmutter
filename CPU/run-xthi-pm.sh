@@ -4,6 +4,9 @@
 #SBATCH -C cpu
 #SBATCH -t 00:10:00
 #SBATCH -J run-xthi
+## uncomment the following lines to use the training reservation (Mar 10 only):
+##SBATCH --reservation=pm_gpu_mar10
+##SBATCH -A ntrain8
 
 export OMP_NUM_THREADS=8
 export OMP_PROC_BIND=spread

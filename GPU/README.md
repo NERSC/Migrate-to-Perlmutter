@@ -6,14 +6,14 @@ All the examples contain a `batch.sh` in their respective directories that shoul
 There is a reservation of Perlmutter GPU nodes on the day of training, which you can use to avoid waiting in the job queue. To check if the reservation is currently active you can use:
 
 ```
-scontrol -o show res pm_gpu_dec1 | grep -o State=ACTIVE
+scontrol -o show res pm_gpu_mar10 | grep -o State=ACTIVE
 ```
 
-If you see `State=ACTIVE` in the output, then the reservation is available. To use it, you must specify the reservation and charge to the account `ntrain2`. To do this, uncomment the following lines from `batch.sh`:
+If you see `State=ACTIVE` in the output, then the reservation is available. To use it, you must specify the reservation and charge to the account `ntrain8`. To do this, uncomment the following lines from `batch.sh`:
 
 ```bash 
-##SBATCH --reservation=pm_gpu_dec1
-##SBATCH -A ntrain2
+##SBATCH --reservation=pm_gpu_mar10
+##SBATCH -A ntrain8
 ```
 
 **TIP**: in each of the exercises, first look in the `Makefile` and `batch.sh` to understand what they will do.
