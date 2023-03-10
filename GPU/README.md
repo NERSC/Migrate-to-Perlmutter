@@ -20,7 +20,7 @@ If you see `State=ACTIVE` in the output, then the reservation is available. To u
 
 
 ## Exercise 1: Simple CUDA C++ program
-Most of the times CUDA kernels and code containing CUDA API calls are placed in a file with extension `.cu `. The `nvcc` compiler provided with CUDAtoolkit can by default recognize `.cu` files as containing CUDA code and can link in the required libraries while also compiling the host side code with a host compiler.
+Most of the times CUDA kernels and code containing CUDA API calls are placed in a file with extension `.cu `. The `nvcc` compiler provided with CUDAtoolkit can by default recognize `.cu` files as containing CUDA code and can link the required libraries while also compiling the host side code with a host compiler.
 This example contains a simple vector addition kernel in `vecAdd.cu` that is called from a main function contained within the same file. This can be built simply with `nvcc` compiler. The build steps have been placed in a `Makefile` placed within the same directory. 
 
 It must be noted that to build this example `nvcc` is being passed a `-arch=sm_80` flag, this is to make sure that code is built for devices with `Compute Capability 8.0` i.e. NVIDIA A100 devices that are available on Perlmutter. To build this example make sure that module `cudatoolkit` has been loaded (using `module list`) and then follow the steps below:
@@ -163,7 +163,15 @@ You can try this example by replacing `PrgEnv-nvidia` with another programming e
  In this exercise, we use the same example from previous exercise but breakdown the code in separate files such that all the CUDA code is in a separate file i.e. `kernels.cu` and it is being called by the main app in `vecAdd.cpp` using the header `kernels.h`. It can be observed in the `Makefile` that CUDA code is built using the `nvcc` compiler and then linked using the MPI build of choice. It is important to link `cudart` library to ensure that all the CUDA API references are available. 
  
  Users can try loading different programming environments i.e. `PrgEnv-nvidia`, `PrgEnv-gnu` and test the sample code by following the below instructions. Make sure that you have the module `cudatoolkit` loaded as that is needed to find the path for `cudart` library.
+To build with PrgEnv-gnu:
  
+ ```bash
+ module load PrgEnv-gnu
+ cd Ex-4
+ make clean
+ make
+ ```
+
  To build with PrgEnv-nvidia:
  
  ```bash
@@ -173,14 +181,7 @@ You can try this example by replacing `PrgEnv-nvidia` with another programming e
  make
  ```
 
- To build with PrgEnv-gnu:
- 
- ```bash
- module load PrgEnv-gnu
- cd Ex-4
- make clean
- make
- ```
+
  
  To run:
  ```bash
@@ -218,7 +219,7 @@ Other 3 GPUs are:
 ****final result: 1.000000 ******
 ```
 
- ## Exercise 5: CUDA +MPI, GPU affinity example.
+ ## Exercise 5: CUDA + MPI, GPU affinity example.
  Most applications assign one MPI rank per GPU and most of the time it is done using round robin method without considering physical location of the CPU core where the MPI rank is residing with respect to the location of the GPU. In this exercise we will use a simple slurm flag to bind MPI ranks to the GPU located closest to the NUMA region where the MPI rank was scheduled. For this we will use the same code as in Exercise 4 but run it in a different manner. 
  
  First make sure that you have `cudatoolkit` and a `PrgEnv-xx` (either `PrgEnv-nvidia` or `PrgEnv-gnu`) loaded. Then use the below steps to build the code:
@@ -427,4 +428,5 @@ You can run these examples by using the batch.sh script.
 As an optional exercise, you can try to build the OpenMP example with `PrgEnv-cray`, this can be done by renaming the `Makefile.cray` file to `Makefile` and then building for OpenMP using the steps above. Be sure to load `PrgEnv-cray` before trying this.
 
 ## Exercise-7b: OpenMP offload in Fortran
-This example contains a simple Fortran code with OpenMP offload. You can build this using Cray or NVIDIA compilers both. First try by loading `PrgEnv-cray` and using the Makefile to build it. Try modifying the batch.sh file from Exercise-7 to run this example. As an optional exercise build this example using NVIDIA compilers. 
+This example contains a simple Fortran code with OpenMP offload. You can build this using Cray compilers. First load `PrgEnv-cray` and use the Makefile to build it. Try modifying the batch.sh file from Exercise-7 to run this example. 
+<!-- As an optional exercise build this example using NVIDIA compilers.  -->

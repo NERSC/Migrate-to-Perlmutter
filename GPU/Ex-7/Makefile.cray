@@ -9,7 +9,7 @@ SRC = *.cpp
 CXX = CC
 
 CXXFLAGS += -O3 -fopenmp
-CXXFLAGS += -fopenmp-targets=nvptx64-nvidia-cuda --cuda-path=${CUDA_HOME} -I${CUDA_HOME}/include -ffp-contract=fast
+CXXFLAGS += -fopenmp-targets=nvptx64-nvidia-cuda
 CXXFLAGS += -Xopenmp-target -march=sm_80
 
 #==========================

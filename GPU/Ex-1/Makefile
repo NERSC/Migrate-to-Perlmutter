@@ -1,5 +1,5 @@
 NVCCFLAGS = -arch=sm_80
-NVCFLAGS = -cuda -gpu=cc80
+NVCFLAGS = -cuda -gpu
 # nvcc can be used to build cuda code (*.cu) for any compiler:
 vec_add: vecAdd.cu
 	nvcc $(NVCCFLAGS) vecAdd.cu -o $@
