@@ -19,7 +19,7 @@ else ifeq ($(OPENACC),y)
 CXXFLAGS += -acc -Minfo=accel
 EXE = vec_add.openacc
 else
-CXXFLAGS += -noacc -Minfo=accel
+CXXFLAGS += -noacc -Minfo
 EXE = vec_add.seq
 endif
 
